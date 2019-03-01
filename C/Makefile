@@ -7,4 +7,4 @@ test: minunit.h test.c
 
 diamond: diamond.h diamond.c
 	gcc diamond.c -o bin/diamond
-	bin/diamond
+	bin/diamond "Z"
