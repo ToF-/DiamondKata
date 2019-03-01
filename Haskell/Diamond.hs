@@ -1,6 +1,7 @@
 module Diamond
 where
 
+diamond :: Char -> [String]
 diamond letter = 
     let 
         range a b = takeWhile (<= b) (iterate succ a)
