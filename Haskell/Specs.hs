@@ -2,28 +2,31 @@ import Test.Hspec
 import Test.QuickCheck
 import Diamond
 import Data.List (transpose)
+import Control.Arrow
 
 main = hspec $ do
     describe "a diamond" $ do
-        let diam = forAll $ fmap diamond $ choose ('A','Z')
+        let d = forAll $ fmap diamond $ choose ('A','Z')
+            equ f g = uncurry (==) . (f &&& g)
+            allTrue props = and . zipWith ($) props . repeat
 
         it "has its height equal to its width" $ 
-            diam $ \d -> length d == length (transpose d) 
+            d $ (length `equ` (length . transpose)) 
 
         it "is reversible vertically" $ 
-            diam $ \d -> reverse d == d
+            d $ (id `equ` reverse)
 
         it "is reversible horizontally" $ 
-            diam $ \d -> map reverse d == d
+            d $ (id `equ` map reverse)
 
         it "contains letters in order in each quarter" $ do
-            diam $ \d -> let s  = length d `div` 2 + 1 
-                             ls = take s ['A'..'Z'] 
-                             ns = map (head . dropWhile (==' '))
-                             d' = transpose d
-                             fh = take s
-                             sh = drop (s-1)
-                         in ns (fh d) == ls 
-                         && ns (sh d) == reverse ls
-                         && ns (fh d') == reverse ls
-                         && ns (sh d') == ls
+            d $  let  size       = succ . (`div` 2) .  length 
+                      letters    = flip take ['A'..'Z'] . size 
+                      firstNonSp = head . dropWhile (==' ')
+                      nonSp      = map firstNonSp
+                      firstHalf  d = take (size d) d 
+                      secondHalf d = drop (pred (size d)) d 
+                      in allTrue [(nonSp . firstHalf) `equ` letters
+                                 ,(nonSp . secondHalf) `equ` (reverse . letters)
+                                 ,(nonSp . firstHalf . transpose) `equ` (reverse . letters)
+                                 ,(nonSp . secondHalf . transpose) `equ` letters]
