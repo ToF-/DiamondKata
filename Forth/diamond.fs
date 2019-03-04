@@ -1,38 +1,43 @@
-char A constant A
-: max-margin ( c -- n  size of max margin)
-    A - ;
+\ Diamond.fs
 
-: .letter     ( n --   print letter #n)
-    A + emit ;
+CHAR A CONSTANT START
 
-: .center     ( n --   print 2n-1 spaces )
-    2* 1- spaces ;
+: LETTER#    \ c -- l#
+    START - 1+ ;
 
-: .letters    ( m,n --    print letter, central space and letter )
-    dup dup .letter .center .letter ;
+: CENTRAL    \ l# -- n
+    2* 3 - ;
 
-: .pattern    ( n --   print letter pattern )
-    dup if .letters else .letter then ;
+: BACKSPACE 
+    8 EMIT ;
 
-: .diamond-line   ( m,n --   print line )
-    over spaces .pattern spaces ;
+: .SPACES    \ n --  
+    DUP 0>= IF SPACES
+          ELSE DROP BACKSPACE 
+          THEN ;
 
-: run-line    ( m,n -- m,n   print line and cr without loss of args )
-    2dup .diamond-line cr ;
-        
-: increment   ( m,n -- m-1,n+1 )
-    swap 1- swap 1+ ;
+: LETTER     \ l# -- c 
+    START 1- + EMIT ;
 
-: first-half  ( m,n -- m',n'  print the first half )
-    begin over while run-line increment repeat ;
+: LETTERS    \ l# -- 
+    DUP LETTER 
+    DUP CENTRAL .SPACES 
+        LETTER ; 
 
-: decrement   ( m,n -- m+1,n-1 )
-    swap increment swap ;
+: LINE       \ max#,l# -- 
+    DUP -ROT - SPACES LETTERS ;
 
-: second-half ( m,n -- m',n'  print the second half )
-    begin run-line decrement dup 0 < until ;
+: 1ST-HALF   \ max# --
+    DUP 1+ 1 DO
+             DUP I CR LINE 
+             LOOP DROP ;
 
-: diamond     ( c --    print a diamond )
-    max-margin 0 cr first-half second-half 2drop ;
+: 2ND-HALF   \ max# --
+    DUP 1+ 2 DO 
+             DUP  DUP 1+ I -  CR LINE 
+             LOOP DROP ;
 
-next-arg drop c@ diamond bye
+: DIAMOND    \ c -- 
+    LETTER# 
+    DUP 1ST-HALF 
+        2ND-HALF CR ;
