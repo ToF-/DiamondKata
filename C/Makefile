@@ -5,6 +5,6 @@ test: minunit.h test.c
 	gcc test.c -lm -o bin/test
 	bin/test
 
-diamond: diamond.h diamond.c
+diamond: diamond.c
 	gcc diamond.c -o bin/diamond
 	bin/diamond "Z"
