@@ -1,28 +1,41 @@
-import Test.Hspec
-import Test.QuickCheck
-import Diamond
-import Data.List (transpose)
+import Test.Hspec (hspec, describe, it)
+import Test.QuickCheck (forAll, choose)
+import Diamond (diamond)
 
 main = hspec $ do
     describe "a diamond" $ do
-        let d = forAll $ fmap diamond $ choose ('A','Z')
+        let letter = choose ('A','Z')
 
-        it "has its height equal to its width" $ 
-            d $ \d -> length d == length (transpose d)
+        it "is not empty" $ forAll letter $ 
+            not . null . concat . diamond
 
-        it "is reversible vertically" $ 
-            d $ \d -> d == reverse d
+        it "contains a diagonal made of letters" $ 
+            forAll letter $ \l ->
+                let ls = ['A'..l]
+                    n  = length ls
+                    d  = diamond l
+                    ul = (map (take n).(take n)) d
+                    m  = n - 1
+                    diag r c | c == (m-r) = ul!!r!!c == ls!!r
+                             | otherwise  = ul!!r!!c == ' '
+                in and [diag r c | r <- [0..m], c <- [0..m]]
+            
+        it "is symmetric horizontally" $ do
+            forAll letter $ \l->
+                diamond l== reverse (diamond l)
 
-        it "is reversible horizontally" $ 
-            d $ \d -> d == map reverse d
+        it "is symmetric vertically" $ do
+            forAll letter $ \l->
+                diamond l== map reverse (diamond l)
 
-        it "contains letters in order in each quarter" $ do
-            d $ \d -> let  size d     = 1+length d `div` 2 
-                           letters d  = take (size d) ['A'..'Z'] 
-                           pattern      = map (head . dropWhile (==' '))
-                           firstHalf  d = take (size d) d 
-                           secondHalf d = drop (pred (size d)) d 
-                    in and [pattern (firstHalf d) == letters d
-                           ,pattern (secondHalf d) == reverse (letters d)
-                           ,pattern (firstHalf (transpose d)) == reverse (letters d)
-                           ,pattern (secondHalf (transpose d)) == letters d]
+        it "has an odd height and width" $ do
+            forAll letter $ \l->
+                odd (length (diamond l))  
+                && odd (maximum (map length (diamond l)))
+
+        it "has an height = width = N*2-1" $ do
+            forAll letter $ \l->
+                let height = length (diamond l)
+                    width  = sum (map length (diamond l)) `div` height
+                in height == width
+                && height == length ['A'..l] * 2 - 1

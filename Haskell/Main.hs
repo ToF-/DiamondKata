@@ -1,6 +1,5 @@
-import System.Environment
-import Diamond
+import System.Environment (getArgs)
+import Diamond (diamond)
 
-main = do
-    max <- fmap (head . head) getArgs
-    putStr $ unlines $ diamond max
+main = getArgs >>= 
+    putStr . unlines . diamond . head . head

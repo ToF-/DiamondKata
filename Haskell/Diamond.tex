@@ -1,0 +1,65 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{longtable,geometry}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[babel]{csquotes}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{fancyhdr}
+\pagestyle{plain}
+\geometry{dvips,a4paper,margin=1.5in}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amssymb,amsmath} 
+\usepackage{afterpage}
+\usepackage{pagecolor}
+\usepackage{fancybox}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{moreverb}
+\usepackage{txfonts}
+\usepackage{todo}
+\usepackage{hyperref}
+\usepackage{bytefield}
+\usepackage{rotating}
+\usepackage{tikz}
+\usepackage{wallpaper}
+\usetikzlibrary{backgrounds,shapes,arrows}
+\addtolength{\hoffset}{-1.5cm}
+\addtolength{\voffset}{-1.5cm}
+\addtolength{\textwidth}{3cm}
+\addtolength{\textheight}{3cm}
+\title{\vfill\textcolor{NavyBlue}{\Huge{Diamond}\\\Huge{Christophe Thibaut}}}
+\date{}
+\input{LittleProgrammer.tex}
+\newcommand{\rk}{\returnkey}
+\newcommand{\ok}{\rk\,ok}
+\newcommand{\cp}{\rk\,compiled}
+\newcommand{\gf}{\emph{gforth} }
+\newcommand{\termfont}[1]{\bfseries\footnotesize#1}
+\renewcommand*{\thesection}{\hex{\value{section}}}
+\newcommand{\cellstyle}{
+\tikzstyle{cell}=[draw,minimum width=0.75cm,minimum height=1.3em, rectangle,draw=Orange,color=Orange]
+\tikzstyle{flat}=[]
+}
+\newcommand{\scell}[3]{ \node[cell] at ({#1+0.5},{#2*1.3em}) {\footnotesize{#3}}; }
+\newcommand{\sflat}[3]{ \node[flat] at ({#1},{#2*1.3em}) {\footnotesize{#3}}; }
+\setcounter{section}{-1}
+\begin{document}
+\lstMakeShortInline[language=Forth,basicstyle=\ttfamily]~
+\input{Haskell.tex}
+\setlength{\columnsep}{1cm}	
+\parindent = 0cm
+\newif\ifpublish
+\publishfalse
+%\publishtrue
+% \publishtrue = we publish \publishfalse = work in progress
+\ifpublish
+% put here everything that should go in the published book
+\maketitle
+\thispagestyle{empty}
+\newpage
+\fi
+\input{Kata.tex}
+\end{document}
